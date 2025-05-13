@@ -1,3 +1,41 @@
 ﻿@using BlazoriseBugReportMaterial_250109.Client.Components.TodoApp
+@using Blazorise.DataGrid
 @page "/apps/todo"
-<TodoItems />
+
+<DataGrid @ref="ListRef"
+          TItem="Todo"
+          Data="_todos">
+    <DataGridColumns>
+        <DataGridColumn TItem="Todo"
+                        Field="@nameof(Todo.Description)"
+                        Caption="Description" />
+    </DataGridColumns>
+    <EmptyTemplate>
+        @GetText()
+    </EmptyTemplate>
+</DataGrid>
+<Button Clicked="@OnUpdatePropertyAsync">Update property</Button>
+
+@code {
+
+    private int PropertyValue { get; set; } = 5;
+    
+    private Task OnUpdatePropertyAsync()
+    {
+        PropertyValue += 2;
+        // Does not help:
+        // StateHasChanged();
+        // _listRef?.Refresh();
+        return Task.CompletedTask;
+    }
+
+    private string GetText()
+    {
+        return $"My text (or fragment) that uses another property {PropertyValue}";
+    }
+    
+    private DataGrid<Todo>? ListRef { get; set; }
+
+    private readonly List<Todo> _todos = [];
+
+}
